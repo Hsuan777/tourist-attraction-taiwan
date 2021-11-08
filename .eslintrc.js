@@ -10,10 +10,14 @@ module.exports = {
   },
   extends: [
     '@nuxtjs',
-    'plugin:nuxt/recommended'
+    'plugin:nuxt/recommended',
+    'airbnb-base'
   ],
   plugins: [
   ],
   // add your custom rules here
-  rules: {}
+  rules: {},
+  settings: {
+    'import/core-modules': ['vue', 'vuex'] // these modules are included in nuxt.js
+  }
 }

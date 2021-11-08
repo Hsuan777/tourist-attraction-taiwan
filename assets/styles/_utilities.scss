@@ -1,0 +1,40 @@
+$utilities: map-merge(
+  $utilities,(
+    "font-size": (
+      property: font-size,
+      class: fz,
+      responsive: true,
+      values: $font-sizes,
+    ),
+    "magic-height": (
+      property: height,
+      class: magic-height,
+      responsive: true,
+      values: $magic-heights,
+    ),
+    "rounded": map-merge(
+      map-get($utilities, "rounded"),
+      (
+        responsive: true,
+        values: map-merge(
+          map-get(map-get($utilities, "rounded"), "values"), 
+          (
+            4: $border-radius-xl,
+          )
+        )
+      )
+    ),
+    "background-color": map-merge(
+      map-get($utilities, "background-color"),
+      (
+        responsive: true,
+      )
+    ),
+    "width": map-merge(
+      map-get($utilities, "width"),
+      (
+        responsive: true,
+      )
+    ),
+  )
+);
