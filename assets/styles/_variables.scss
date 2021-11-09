@@ -396,6 +396,8 @@ $spacers: (
   13: $spacer * 3.25,     // 52
   14: $spacer * 3.5,     // 56
   15: $spacer * 3.75,     // 60
+  16: $spacer * 4,     // 64
+  17: $spacer * 4.25,     // 68
 );
 
 $negative-spacers: if($enable-negative-margins, negativify-map($spacers), null) !default;
@@ -537,7 +539,8 @@ $border-widths: (
   2: 2px,
   3: 3px,
   4: 4px,
-  5: 5px
+  5: 5px,
+  8: 8px,
 ) !default;
 
 $border-color:                $gray-300 !default;
@@ -547,7 +550,7 @@ $border-color:                $gray-300 !default;
 $border-radius:               .25rem !default;
 $border-radius-sm:            .2rem !default;
 $border-radius-lg:            .3rem !default;
-$border-radius-xl:            .75rem;
+$border-radius-xl:            .5rem;
 $border-radius-pill:          50rem !default;
 // scss-docs-end border-radius-variables
 
@@ -1669,5 +1672,9 @@ $pre-color:                         null !default;
 
 $magic-heights: (
   "128": 128px,
-  "190": 190px
+  "190": 190px,
+  "239": 239px,
+  "300": 300px,
+  "387": 387px,
+  "400": 400px
 );

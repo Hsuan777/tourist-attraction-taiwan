@@ -3,14 +3,6 @@
   background-size: cover;
   background-repeat: no-repeat;
   &__index {
-    height: 138px;
-    @include media-breakpoint-up(sm) {
-      height: 260px;
-      background-image: url("~/static/banner-index.png");
-    }
-    @include media-breakpoint-up(md) {
-      height: 400px;
-    }
-    
+    background-image: url("~/static/banner-index.png");
   }
 }

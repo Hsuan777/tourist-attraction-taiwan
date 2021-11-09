@@ -1,8 +1,7 @@
 <template>
   <div>
-    <loading v-model="isLoading" />
     <!-- banner -->
-    <figure class="banner banner__index mb-15">
+    <figure class="banner banner__index magic-height-260 magic-height-md-400 mb-15">
       <div class="container h-100 d-flex align-items-end pb-7">
         <div class="row justify-content-center w-100">
           <div class="col-md-10">
@@ -62,30 +61,32 @@
       <p class="fz-large mb-6 border-start border-primary border-4 ps-1">
         搜尋結果
       </p>
-      <div class="row row-cols-4">
-        <div v-for="item in tempData" :key="item.ID" class="col mb-3 mb-md-14">
+      <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4">
+        <div v-for="item in tempData" :key="item.ID" class="col mb-3 mb-md-14 position-relative">
           <div class="border rounded-4 h-100">
-            <img
-              v-if="item.Picture.PictureUrl1"
-              :src="item.Picture.PictureUrl1"
-              :alt="item.Picture.PictureDescription1"
-              class="img img__card magic-height-128 magic-height-md-190"
-            >
-            <p
-              v-else
-              class="
-                img img__card
-                magic-height-128 magic-height-md-190
-                bg-grey
-                text-secondary
-                fz-large
-                d-flex
-                justify-content-center
-                align-items-center
-              "
-            >
-              景點
-            </p>
+            <NuxtLink :to="`/${item.Name}`" class="stretched-link link-secondary">
+              <img
+                v-if="item.Picture.PictureUrl1"
+                :src="item.Picture.PictureUrl1"
+                :alt="item.Picture.PictureDescription1"
+                class="img img__card magic-height-128 magic-height-md-190"
+              >
+              <p
+                v-else
+                class="
+                  img img__card
+                  magic-height-128 magic-height-md-190
+                  bg-grey
+                  text-secondary
+                  fz-large
+                  d-flex
+                  justify-content-center
+                  align-items-center
+                "
+              >
+                景點
+              </p>
+            </NuxtLink>
             <div class="py-3 px-4">
               <h2 class="fz-medium mb-2">
                 {{ item.Name }}
@@ -114,6 +115,8 @@
 </template>
 
 <script>
+import JsSHA from 'jssha';
+
 export default {
   data() {
     return {
@@ -207,7 +210,6 @@ export default {
           nameEn: 'LienchiangCounty',
         },
       ],
-      isLoading: false,
       tempData: {},
     };
   },
@@ -218,12 +220,26 @@ export default {
     getData(city = 'Taipei') {
       this.isLoading = true;
       this.$axios
-        .get(`https://ptx.transportdata.tw/MOTC/v2/Tourism/ScenicSpot/${city}?$top=30&$format=JSON`)
+        .get(
+          `https://ptx.transportdata.tw/MOTC/v2/Tourism/ScenicSpot/${city}?$top=30&$format=JSON`,
+          {
+            headers: this.getAuthorizationHeader(),
+          },
+        )
         .then((respons) => {
           this.tempData = respons.data;
-          // this.isLoading = false;
-          console.log(this.tempData);
         });
+    },
+    getAuthorizationHeader() {
+      const AppID = '3209d3c409014e8cb42b5e83f861c102';
+      const AppKey = 'qd4_Nh2b30-edGu3vXmbDzaWTFU';
+      const GMTString = new Date().toGMTString();
+      const ShaObj = new JsSHA('SHA-1', 'TEXT');
+      ShaObj.setHMACKey(AppKey, 'TEXT');
+      ShaObj.update(`x-date: ${GMTString}`);
+      const HMAC = ShaObj.getHMAC('B64');
+      const Authorization = `hmac username="${AppID}", algorithm="hmac-sha1", headers="x-date", signature="${HMAC}"`;
+      return { Authorization, 'X-Date': GMTString };
     },
   },
 };
