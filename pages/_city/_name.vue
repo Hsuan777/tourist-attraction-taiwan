@@ -44,7 +44,7 @@
             <li class="mb-6">
               <h3 class="fz-medium d-flex align-items-center mb-2">
                 <img src="~/static/icon/icon_location-red.svg" alt="icon_location" class="pe-2">
-                <NuxtLink :to="`/`" class="stretched-link">
+                <NuxtLink :to="`/${tempData.City}`">
                   {{ tempData.City }}
                 </NuxtLink>
               </h3>
@@ -117,7 +117,7 @@
       <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4">
         <div v-for="item in randomData" :key="item.ID" class="col mb-3 mb-md-14 position-relative">
           <div class="border rounded-4 h-100">
-            <NuxtLink :to="`/${item.Name}`" class="stretched-link link-secondary">
+            <NuxtLink :to="`/${item.City}/${item.Name}`" class="stretched-link link-secondary">
               <img
                 v-if="item.Picture.PictureUrl1"
                 :src="item.Picture.PictureUrl1"
@@ -145,7 +145,7 @@
                 {{ item.Name }}
               </h2>
               <p class="text-primary mb-3 d-flex">
-                <img src="../static/icon/icon_location.svg" alt="icon_location" class="pe-1">
+                <img src="~/static/icon/icon_location.svg" alt="icon_location" class="pe-1">
                 {{ item.City }}
               </p>
               <p class="d-flex flex-wrap">

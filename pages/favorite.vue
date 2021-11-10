@@ -8,58 +8,19 @@
             <h1 class="text-white fz-huger">
               景點
             </h1>
-            <ul class="list-unstyled mb-4">
-              <li>
-                <button
-                  type="button"
-                  class="btn btn-lg btn-danger rounded-pill d-flex align-items-center px-6"
-                >
-                  景點
-                  <img
-                    src="../static/icon/icon_attractions.svg"
-                    alt="icon_attractions"
-                    class="ps-2"
-                  >
-                </button>
-              </li>
-            </ul>
-            <form action="" class="row g-2">
-              <div class="col">
-                <select
-                  class="form-select py-3"
-                  aria-label="Default select example"
-                  @change="getAllData($event.target.value)"
-                >
-                  <option selected>
-                    選擇想去的地區
-                  </option>
-                  <option
-                    v-for="(item, index) in cities"
-                    :key="item.name + index"
-                    :value="item.nameEn"
-                  >
-                    {{ item.name }}
-                  </option>
-                </select>
-              </div>
-              <div class="col">
-                <input
-                  v-model="cacheSearch"
-                  class="form-control text-secondary py-3"
-                  placeholder="輸入景點名稱"
-                >
-              </div>
-            </form>
           </div>
         </div>
       </div>
     </figure>
-    <!-- 搜尋結果 -->
+    <!-- 我的最愛 -->
     <section class="container mb-5">
       <p class="fz-large mb-6 border-start border-primary border-4 ps-1">
-        搜尋結果
+        我的最愛
       </p>
-      <ul class="list-unstyled row row-cols-1 row-cols-md-3 row-cols-lg-4">
+      <ul
+        v-if="tempAllData.length > 0"
+        class="list-unstyled row row-cols-1 row-cols-md-3 row-cols-lg-4"
+      >
         <li v-for="item in finalDisplayData" :key="item.ID" class="col mb-3 mb-md-14">
           <div class="border rounded-4 h-100 position-relative">
             <NuxtLink :to="`/${item.City}/${item.Name}`" class="stretched-link link-secondary">
@@ -115,15 +76,17 @@
                 src="~/static/icon/icon_like.svg"
                 alt="icon_like"
               >
-              <img
-                v-else
-                src="~/static/icon/icon_like-1.svg"
-                alt="icon_like"
-              >
+              <img v-else src="~/static/icon/icon_like-1.svg" alt="icon_like">
             </button>
           </div>
         </li>
       </ul>
+      <div v-else>
+        <p>還沒有加入任何最愛喔!</p>
+        <NuxtLink to="/">
+          點此回首頁
+        </NuxtLink>
+      </div>
     </section>
     <div class="d-flex justify-content-center mb-18">
       <Page :pages="totalPages" :current-page="currentPage" @display-page="changeDisplayData" />
@@ -232,7 +195,7 @@ export default {
         },
       ],
       tempAllData: [],
-      totalPages: 10,
+      totalPages: 0,
       currentPage: 1,
       finalDisplayData: [],
       cacheSearch: '',
@@ -251,18 +214,22 @@ export default {
     },
   },
   mounted() {
-    this.getAllData();
     this.localStorageAttractionsID = this.$localStorage.get('myFavorite') || [];
+    this.localStorageAttractionsID.forEach((item) => {
+      this.getData(item);
+    });
   },
   methods: {
-    getAllData(city = 'Taipei') {
-      this.cacheSearch = '';
+    getData(attractionsID) {
       this.$axios
-        .get(`https://ptx.transportdata.tw/MOTC/v2/Tourism/ScenicSpot/${city}?$format=JSON`, {
-          headers: this.getAuthorizationHeader(),
-        })
+        .get(
+          `https://ptx.transportdata.tw/MOTC/v2/Tourism/ScenicSpot?$filter=ID%20eq%20'${attractionsID}'&$format=JSON`,
+          {
+            headers: this.getAuthorizationHeader(),
+          },
+        )
         .then((respons) => {
-          this.tempAllData = respons.data;
+          this.tempAllData.push(respons.data[0]);
           this.totalPages = Math.ceil(this.tempAllData.length / 32);
           this.changeDisplayData();
         });
@@ -297,6 +264,8 @@ export default {
           this.$localStorage.set('myFavorite', this.localStorageAttractionsID);
         } else {
           this.localStorageAttractionsID.splice(dataIndex, 1);
+          this.tempAllData.splice(dataIndex, 1);
+          this.changeDisplayData();
           this.$localStorage.set('myFavorite', this.localStorageAttractionsID);
         }
       } else {

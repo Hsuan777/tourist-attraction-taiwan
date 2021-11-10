@@ -16,7 +16,7 @@
                 >
                   景點
                   <img
-                    src="../static/icon/icon_attractions.svg"
+                    src="~/static/icon/icon_attractions.svg"
                     alt="icon_attractions"
                     class="ps-2"
                   >
@@ -30,13 +30,11 @@
                   aria-label="Default select example"
                   @change="getAllData($event.target.value)"
                 >
-                  <option selected>
-                    選擇想去的地區
-                  </option>
                   <option
                     v-for="(item, index) in cities"
                     :key="item.name + index"
-                    :value="item.nameEn"
+                    :value="item.name"
+                    :selected="item.name === $route.params.city"
                   >
                     {{ item.name }}
                   </option>
@@ -59,8 +57,12 @@
       <p class="fz-large mb-6 border-start border-primary border-4 ps-1">
         搜尋結果
       </p>
-      <ul class="list-unstyled row row-cols-1 row-cols-md-3 row-cols-lg-4">
-        <li v-for="item in finalDisplayData" :key="item.ID" class="col mb-3 mb-md-14">
+      <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4">
+        <div
+          v-for="item in finalDisplayData"
+          :key="item.ID"
+          class="col mb-3 mb-md-14"
+        >
           <div class="border rounded-4 h-100 position-relative">
             <NuxtLink :to="`/${item.City}/${item.Name}`" class="stretched-link link-secondary">
               <img
@@ -122,8 +124,8 @@
               >
             </button>
           </div>
-        </li>
-      </ul>
+        </div>
+      </div>
     </section>
     <div class="d-flex justify-content-center mb-18">
       <Page :pages="totalPages" :current-page="currentPage" @display-page="changeDisplayData" />
@@ -133,7 +135,7 @@
 
 <script>
 import JsSHA from 'jssha';
-import Page from '../components/Pagination.vue';
+import Page from '../../components/Pagination.vue';
 
 export default {
   components: {
@@ -255,12 +257,18 @@ export default {
     this.localStorageAttractionsID = this.$localStorage.get('myFavorite') || [];
   },
   methods: {
-    getAllData(city = 'Taipei') {
-      this.cacheSearch = '';
+    getAllData(select) {
+      if (select) {
+        this.$router.push(`/${select}`);
+      }
+      const city = this.cities.filter((item) => item.name === this.$route.params.city);
       this.$axios
-        .get(`https://ptx.transportdata.tw/MOTC/v2/Tourism/ScenicSpot/${city}?$format=JSON`, {
-          headers: this.getAuthorizationHeader(),
-        })
+        .get(
+          `https://ptx.transportdata.tw/MOTC/v2/Tourism/ScenicSpot/${city[0].nameEn}?$&$format=JSON`,
+          {
+            headers: this.getAuthorizationHeader(),
+          },
+        )
         .then((respons) => {
           this.tempAllData = respons.data;
           this.totalPages = Math.ceil(this.tempAllData.length / 32);

@@ -6,6 +6,12 @@ $utilities: map-merge(
       responsive: true,
       values: $font-sizes,
     ),
+    "z-index": (
+      property: z-index,
+      class: zi,
+      responsive: true,
+      values: $zindex-favorite,
+    ),
     "magic-height": (
       property: height,
       class: magic-height,

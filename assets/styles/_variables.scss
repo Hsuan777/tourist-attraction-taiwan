@@ -393,11 +393,12 @@ $spacers: (
   10: $spacer * 2.5,   // 40
   11: $spacer * 2.75,  // 44
   12: $spacer * 3,     // 48
-  13: $spacer * 3.25,     // 52
-  14: $spacer * 3.5,     // 56
-  15: $spacer * 3.75,     // 60
+  13: $spacer * 3.25,  // 52
+  14: $spacer * 3.5,   // 56
+  15: $spacer * 3.75,  // 60
   16: $spacer * 4,     // 64
-  17: $spacer * 4.25,     // 68
+  17: $spacer * 4.25,  // 68
+  18: $spacer * 4.5,  // 72
 );
 
 $negative-spacers: if($enable-negative-margins, negativify-map($spacers), null) !default;
@@ -410,9 +411,10 @@ $negative-spacers: if($enable-negative-margins, negativify-map($spacers), null) 
 // scss-docs-start position-map
 $position-values: (
   0: 0,
+  5: 5%,
   50: 50%,
   100: 100%
-) !default;
+);
 // scss-docs-end position-map
 
 // Body
@@ -1095,6 +1097,7 @@ $form-validation-states: (
 // of components dependent on the z-axis and are designed to all work together.
 
 // scss-docs-start zindex-stack
+$zindex-favorite:                   9;
 $zindex-dropdown:                   1000 !default;
 $zindex-sticky:                     1020 !default;
 $zindex-fixed:                      1030 !default;
