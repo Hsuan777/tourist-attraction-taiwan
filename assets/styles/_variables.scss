@@ -413,6 +413,7 @@ $position-values: (
   0: 0,
   5: 5%,
   50: 50%,
+  65: 65%,
   100: 100%
 );
 // scss-docs-end position-map
@@ -1674,7 +1675,7 @@ $kbd-bg:                            $gray-900 !default;
 $pre-color:                         null !default;
 
 $magic-heights: (
-  "128": 128px,
+  "150": 150px,
   "190": 190px,
   "239": 239px,
   "300": 300px,

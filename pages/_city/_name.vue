@@ -93,7 +93,7 @@
                 {{ tempData.DescriptionDetail }}
               </p>
             </li>
-            <li class="d-flex">
+            <li class="d-flex justify-content-center justify-content-md-start">
               <a
                 :href="`tel:${tempData.Phone}`"
                 class="btn btn-outline-danger d-flex align-items-center py-5 px-7 me-5 rounded-4"
@@ -284,7 +284,6 @@ export default {
         .then((respons) => {
           this.tempData = { ...respons.data[0] };
           this.getOtherData();
-          console.log(this.tempData);
         });
     },
     getOtherData() {

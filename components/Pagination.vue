@@ -1,7 +1,7 @@
 <template>
   <nav v-if="pages > 1" aria-label="Page navigation">
     <ul class="pagination mb-0">
-      <li class="page-item me-3" :class="{ disabled: currentPage === 1 }">
+      <li class="page-item me-md-3" :class="{ disabled: currentPage === 1 }">
         <a class="page-link" href="#" @click.prevent="clickPage(currentPage - 1)">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -22,7 +22,7 @@
       <li
         v-for="item in pages"
         :key="item"
-        class="page-item me-3"
+        class="page-item me-3 d-none d-md-block"
         :class="{ active: currentPage === item }"
       >
         <a
@@ -33,6 +33,11 @@
         >
           {{ item }}
         </a>
+      </li>
+      <li class="page-item mx-5 d-md-none">
+        <p class="d-flex align-items-center h-100">
+          第 {{ currentPage }} 頁
+        </p>
       </li>
       <li class="page-item" :class="{ disabled: currentPage === pages }">
         <a class="page-link" href="#" @click.prevent="clickPage(currentPage + 1)">
