@@ -2,7 +2,16 @@
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
-  &__index {
+  &__attraction {
     background-image: url("~/static/banner-index.png");
+  }
+  &__restaurant {
+    background-image: url("~/static/banner-restaurant.png");
+  }
+  &__hotel {
+    background-image: url("~/static/banner-hotel.png");
+  }
+  &__activity {
+    background-image: url("~/static/banner-activity.png");
   }
 }

@@ -1,69 +1,15 @@
 <template>
   <div>
     <!-- banner -->
-    <figure class="banner banner__index magic-height-260 magic-height-md-400 mb-15">
-      <div class="container h-100 d-flex align-items-end pb-7">
-        <div class="row justify-content-center w-100">
-          <div class="col-md-10">
-            <h1 class="text-white fz-huger">
-              景點
-            </h1>
-            <ul class="list-unstyled mb-4">
-              <li>
-                <button
-                  type="button"
-                  class="btn btn-lg btn-danger rounded-pill d-flex align-items-center px-6"
-                >
-                  景點
-                  <img
-                    src="~/static/icon/icon_attractions.svg"
-                    alt="icon_attractions"
-                    class="ps-2"
-                  >
-                </button>
-              </li>
-            </ul>
-            <form action="" class="row g-2">
-              <div class="col">
-                <select
-                  class="form-select py-3"
-                  aria-label="Default select example"
-                  @change="getAllData($event.target.value)"
-                >
-                  <option
-                    v-for="(item, index) in cities"
-                    :key="item.name + index"
-                    :value="item.name"
-                    :selected="item.name === $route.params.city"
-                  >
-                    {{ item.name }}
-                  </option>
-                </select>
-              </div>
-              <div class="col">
-                <input
-                  v-model="cacheSearch"
-                  class="form-control text-secondary py-3"
-                  placeholder="輸入景點名稱"
-                >
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </figure>
+    <Banner @changeCity="getAttractionsData" @searchData="getSearchData" />
     <!-- 搜尋結果 -->
     <section class="container mb-5">
       <p class="fz-large mb-6 border-start border-primary border-4 ps-1">
         搜尋結果
       </p>
       <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4">
-        <div
-          v-for="item in finalDisplayData"
-          :key="item.ID"
-          class="col mb-3 mb-md-14"
-        >
-          <div class="border rounded-4 h-100 position-relative">
+        <div v-for="item in finalDisplayData" :key="item.ID" class="col mb-3 mb-md-14">
+          <div class="card--hover shadow border rounded-4 h-100 position-relative">
             <NuxtLink :to="`/${item.City}/${item.Name}`" class="stretched-link link-secondary">
               <img
                 v-if="item.Picture.PictureUrl1"
@@ -109,7 +55,18 @@
             </div>
             <button
               type="button"
-              class="btn btn-link position-absolute top-5 end-5 zi-9 p-2 bg-white rounded-circle"
+              class="
+                btn btn-link
+                position-absolute
+                top-5
+                end-5
+                zi-9
+                p-2
+                bg-white
+                rounded-circle
+                border
+                shadow-sm
+              "
               @click="setLocalStorage(item.ID)"
             >
               <img
@@ -117,11 +74,7 @@
                 src="~/static/icon/icon_like.svg"
                 alt="icon_like"
               >
-              <img
-                v-else
-                src="~/static/icon/icon_like-1.svg"
-                alt="icon_like"
-              >
+              <img v-else src="~/static/icon/icon_like-1.svg" alt="icon_like">
             </button>
           </div>
         </div>
@@ -253,11 +206,11 @@ export default {
     },
   },
   mounted() {
-    this.getAllData();
+    this.getAttractionsData();
     this.localStorageAttractionsID = this.$localStorage.get('myFavorite') || [];
   },
   methods: {
-    getAllData(select) {
+    getAttractionsData(select) {
       if (select) {
         this.$router.push(`/${select}`);
       }
