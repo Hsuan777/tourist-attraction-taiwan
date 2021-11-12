@@ -51,7 +51,7 @@
                 {{ item.Name }}
               </h2>
               <p class="text-primary mb-3 d-flex">
-                <img src="~/static/icon/icon_location.svg" alt="icon_location" class="pe-1">
+                <img src="~/assets/icon/icon_location.svg" alt="icon_location" class="pe-1">
                 {{ item.City }}
               </p>
               <p class="d-flex flex-wrap">
@@ -73,10 +73,10 @@
             >
               <img
                 v-if="localStorageAttractionsID.indexOf(item.ID) === -1"
-                src="~/static/icon/icon_like.svg"
+                src="~/assets/icon/icon_like.svg"
                 alt="icon_like"
               >
-              <img v-else src="~/static/icon/icon_like-1.svg" alt="icon_like">
+              <img v-else src="~/assets/icon/icon_like-1.svg" alt="icon_like">
             </button>
           </div>
         </li>

@@ -2,16 +2,16 @@
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
-  &__attraction {
+  &__ScenicSpot {
     background-image: url("~/static/banner-index.png");
   }
-  &__restaurant {
+  &__Restaurant {
     background-image: url("~/static/banner-restaurant.png");
   }
-  &__hotel {
+  &__Hotel {
     background-image: url("~/static/banner-hotel.png");
   }
-  &__activity {
+  &__Activity {
     background-image: url("~/static/banner-activity.png");
   }
 }

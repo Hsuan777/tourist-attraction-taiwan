@@ -13,13 +13,15 @@
             <li v-for="item in categories" :key="item.name">
               <button
                 type="button"
-                class="btn btn-lg rounded-pill d-flex align-items-center px-6 me-3"
+                class="btn btns-lg rounded-pill d-flex align-items-center px-6 me-3"
                 :class="item.nameEn === nowCategory.nameEn ? 'btn-danger' : ' btn-white'"
                 @click="changeCategory(item.nameEn)"
               >
                 {{ item.name }}
                 <img
-                  :src="`/tourist-attraction-taiwan/_nuxt/static/icon/icon_${item.nameEn}.svg`"
+                  :src="`_nuxt/assets/icon/icon_${item.nameEn}-${
+                    item.nameEn === nowCategory.nameEn ? 'white' : 'gery'
+                  }.png`"
                   :alt="`icon_${item.nameEn}`"
                   class="ps-2"
                 >
@@ -40,7 +42,10 @@
                   v-for="(item, index) in cities"
                   :key="item.name + index"
                   :value="item.nameEn"
-                  :selected="item.name === $route.params.city"
+                  :selected="
+                    item.name ===
+                      `${$route.params.city === undefined ? '臺北市' : $route.params.city}`
+                  "
                 >
                   {{ item.name }}
                 </option>
@@ -65,7 +70,7 @@ export default {
     return {
       nowCategory: {
         name: '景點',
-        nameEn: 'attraction',
+        nameEn: 'ScenicSpot',
       },
       cities: [
         {
@@ -160,19 +165,19 @@ export default {
       categories: [
         {
           name: '景點',
-          nameEn: 'attraction',
+          nameEn: 'ScenicSpot',
         },
         {
           name: '餐飲',
-          nameEn: 'restaurant',
+          nameEn: 'Restaurant',
         },
         {
           name: '旅宿',
-          nameEn: 'hotel',
+          nameEn: 'Hotel',
         },
         {
           name: '活動',
-          nameEn: 'activity',
+          nameEn: 'Activity',
         },
       ],
       cacheSearch: '',
@@ -190,6 +195,7 @@ export default {
     changeCategory(category) {
       const tempData = this.categories.filter((item) => item.nameEn === category);
       this.nowCategory = { ...tempData[0] };
+      this.$emit('changeCategory', this.nowCategory);
     },
   },
 };

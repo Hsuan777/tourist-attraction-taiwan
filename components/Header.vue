@@ -10,7 +10,7 @@
         to="/favorite"
         class="btn btn-white text-secondary d-flex align-items-center shadow"
       >
-        <img src="../static/icon/icon_like-2.svg" alt="icon_like" class="pe-1">
+        <img src="../assets/icon/icon_like-2.svg" alt="icon_like" class="pe-1">
         我的最愛
       </NuxtLink>
     </div>

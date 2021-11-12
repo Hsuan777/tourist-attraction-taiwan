@@ -1,12 +1,12 @@
 <template>
   <div>
-    <figure class="banner banner__index magic-height-300 mb-15">
+    <figure class="banner magic-height-300 mb-15" :class="`banner__${$route.params.category}`">
       <div class="container h-100 d-flex align-items-end pb-7">
         <div class="row justify-content-center w-100">
           <div class="col-md-10">
-            <h1 class="text-white fz-huger">
-              景點
-            </h1>
+            <p class="text-white fz-huger">
+              {{ categories.filter((item) => item.nameEn === $route.params.category)[0].name }}
+            </p>
           </div>
         </div>
       </div>
@@ -38,27 +38,25 @@
         </div>
         <div class="col-md-6 position-relative bg-white rounded">
           <div class="px-5 pt-4 pb-6">
-            <div class="d-flex">
-              <NuxtLink
-                :to="`/${tempData.City}`"
-                class="fz-larger text-secondary text-decoration-none pe-1"
-              >
-                {{ tempData.City }} /
-              </NuxtLink>
-              <h2 class="fz-larger mb-4">
-                {{ tempData.Name }}
-              </h2>
-            </div>
+            <NuxtLink :to="`/`" class="text-secondary text-decoration-none pe-1">
+              HOME / {{ tempData.City }}
+            </NuxtLink>
+            <h2 class="fz-larger mb-4">
+              {{ tempData.Name }}
+            </h2>
             <ul class="list-unstyled">
               <li class="mb-6">
                 <h3 class="fz-medium d-flex align-items-center mb-2">
-                  <img src="~/static/icon/icon_location-red.svg" alt="icon_location" class="pe-2">
-                  <a :href="`https://www.google.com/maps/place/${tempData.Position.PositionLat},${tempData.Position.PositionLon}`" target="_blank">Google 地圖</a>
+                  <img src="~/assets/icon/icon_location-red.svg" alt="icon_location" class="pe-2">
+                  <a
+                    :href="`https://www.google.com/maps/place/${tempData.Position.PositionLat},${tempData.Position.PositionLon}`"
+                    target="_blank"
+                  >Google 地圖</a>
                 </h3>
               </li>
               <li class="mb-6 ps-1">
                 <h3 class="fz-medium d-flex align-items-center mb-2">
-                  <img src="~/static/icon/icon_label.svg" alt="icon_label" class="pe-3">
+                  <img src="~/assets/icon/icon_label.svg" alt="icon_label" class="pe-3">
                   標籤
                 </h3>
                 <p class="ps-8">
@@ -84,7 +82,7 @@
               </li>
               <li class="mb-6 ps-1">
                 <h3 class="fz-medium d-flex align-items-center mb-2">
-                  <img src="~/static/icon/icon_time.svg" alt="icon_time" class="pe-3">
+                  <img src="~/assets/icon/icon_time.svg" alt="icon_time" class="pe-3">
                   開放時間
                 </h3>
                 <p class="ps-8">
@@ -93,7 +91,7 @@
               </li>
               <li class="mb-8 ps-1">
                 <h3 class="fz-medium d-flex align-items-center mb-2">
-                  <img src="~/static/icon/icon_article.svg" alt="icon_article" class="pe-3">
+                  <img src="~/assets/icon/icon_article.svg" alt="icon_article" class="pe-3">
                   簡介
                 </h3>
                 <p class="ps-8">
@@ -105,7 +103,7 @@
                   :href="`tel:${tempData.Phone}`"
                   class="btn btn-outline-danger d-flex align-items-center py-5 px-7 me-5 rounded-4"
                 >
-                  <img src="~/static/icon/icon_phone.svg" alt="icon_phone" class="pe-1">
+                  <img src="~/assets/icon/icon_phone.svg" alt="icon_phone" class="pe-1">
                   {{ tempData.Phone }}
                 </a>
                 <a
@@ -132,10 +130,10 @@
             >
               <img
                 v-if="localStorageAttractionsID.indexOf(tempData.ID) === -1"
-                src="~/static/icon/icon_like.svg"
+                src="~/assets/icon/icon_like.svg"
                 alt="icon_like"
               >
-              <img v-else src="~/static/icon/icon_like-1.svg" alt="icon_like">
+              <img v-else src="~/assets/icon/icon_like-1.svg" alt="icon_like">
             </button>
           </div>
         </div>
@@ -148,7 +146,10 @@
       <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4">
         <div v-for="item in randomData" :key="item.ID" class="col mb-3 mb-md-14 position-relative">
           <div class="border rounded-4 h-100">
-            <NuxtLink :to="`/${item.City}/${item.Name}`" class="stretched-link link-secondary">
+            <NuxtLink
+              :to="`/${$route.params.category}/${item.City}/${item.Name}`"
+              class="stretched-link link-secondary"
+            >
               <img
                 v-if="item.Picture.PictureUrl1"
                 :src="item.Picture.PictureUrl1"
@@ -176,7 +177,7 @@
                 {{ item.Name }}
               </h2>
               <p class="text-primary mb-3 d-flex">
-                <img src="~/static/icon/icon_location.svg" alt="icon_location" class="pe-1">
+                <img src="~/assets/icon/icon_location.svg" alt="icon_location" class="pe-1">
                 {{ item.City }}
               </p>
               <p class="d-flex flex-wrap">
@@ -293,6 +294,24 @@ export default {
           nameEn: 'LienchiangCounty',
         },
       ],
+      categories: [
+        {
+          name: '景點',
+          nameEn: 'ScenicSpot',
+        },
+        {
+          name: '餐飲',
+          nameEn: 'Restaurant',
+        },
+        {
+          name: '旅宿',
+          nameEn: 'Hotel',
+        },
+        {
+          name: '活動',
+          nameEn: 'Activity',
+        },
+      ],
       tempData: {
         Picture: {},
         Position: {},
@@ -310,7 +329,7 @@ export default {
     getData() {
       this.$axios
         .get(
-          `https://ptx.transportdata.tw/MOTC/v2/Tourism/ScenicSpot/?$filter=Name%20eq%20'${this.$route.params.name}'&$format=JSON`,
+          `https://ptx.transportdata.tw/MOTC/v2/Tourism/${this.$route.params.category}/?$filter=Name%20eq%20'${this.$route.params.name}'&$format=JSON`,
           {
             headers: this.getAuthorizationHeader(),
           },
@@ -324,7 +343,7 @@ export default {
       const city = this.cities.filter((item) => item.name === this.tempData.City);
       this.$axios
         .get(
-          `https://ptx.transportdata.tw/MOTC/v2/Tourism/ScenicSpot/${city[0].nameEn}?$format=JSON`,
+          `https://ptx.transportdata.tw/MOTC/v2/Tourism/${this.$route.params.category}/${city[0].nameEn}?$format=JSON`,
           {
             headers: this.getAuthorizationHeader(),
           },

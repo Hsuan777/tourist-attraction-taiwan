@@ -1,7 +1,11 @@
 <template>
   <div>
     <!-- banner -->
-    <Banner @changeCity="getAttractionsData" @searchData="getSearchData" />
+    <Banner
+      @changeCategory="selectCatagory"
+      @changeCity="getAttractionsData"
+      @searchData="getSearchData"
+    />
     <!-- 搜尋結果 -->
     <section class="container mb-5">
       <p class="fz-large mb-6 border-start border-primary border-4 ps-1">
@@ -12,7 +16,10 @@
           <div class="card--hover shadow border rounded-4 h-100 position-relative">
             <div class="row g-0">
               <div class="col-6 col-md-12">
-                <NuxtLink :to="`/${item.City}/${item.Name}`" class="stretched-link link-secondary">
+                <NuxtLink
+                  :to="`/${cacheCatagory.nameEn}/${item.City}/${item.Name}`"
+                  class="stretched-link link-secondary"
+                >
                   <img
                     v-if="item.Picture.PictureUrl1"
                     :src="item.Picture.PictureUrl1"
@@ -42,7 +49,7 @@
                     {{ item.Name }}
                   </h2>
                   <p class="text-primary mb-2 mb-md-3 d-flex">
-                    <img src="~/static/icon/icon_location.svg" alt="icon_location" class="pe-1">
+                    <img src="~/assets/icon/icon_location.svg" alt="icon_location" class="pe-1">
                     {{ item.City }}
                   </p>
                   <p class="d-flex flex-wrap">
@@ -86,10 +93,10 @@
             >
               <img
                 v-if="localStorageAttractionsID.indexOf(item.ID) === -1"
-                src="~/static/icon/icon_like.svg"
+                src="~/assets/icon/icon_like.svg"
                 alt="icon_like"
               >
-              <img v-else src="~/static/icon/icon_like-1.svg" alt="icon_like">
+              <img v-else src="~/assets/icon/icon_like-1.svg" alt="icon_like">
             </button>
           </div>
         </li>
@@ -118,6 +125,11 @@ export default {
       currentPage: 1,
       finalDisplayData: [],
       cacheSearch: '',
+      cacheCatagory: {
+        name: '景點',
+        nameEn: 'ScenicSpot',
+      },
+      cacheCity: 'Taipei',
       localStorageAttractionsID: [],
     };
   },
@@ -133,16 +145,20 @@ export default {
     },
   },
   mounted() {
-    this.getAttractionsData();
+    this.selectCatagory(this.cacheCatagory);
     this.localStorageAttractionsID = this.$localStorage.get('myFavorite') || [];
   },
   methods: {
-    getAttractionsData(city = 'Taipei') {
+    getAttractionsData(city) {
       this.cacheSearch = '';
+      this.cacheCity = city;
       this.$axios
-        .get(`https://ptx.transportdata.tw/MOTC/v2/Tourism/ScenicSpot/${city}?$format=JSON`, {
-          headers: this.getAuthorizationHeader(),
-        })
+        .get(
+          `https://ptx.transportdata.tw/MOTC/v2/Tourism/${this.cacheCatagory.nameEn}/${city}?$format=JSON`,
+          {
+            headers: this.getAuthorizationHeader(),
+          },
+        )
         .then((respons) => {
           this.tempAllData = respons.data;
           this.totalPages = Math.ceil(this.tempAllData.length / 32);
@@ -188,6 +204,10 @@ export default {
         this.localStorageAttractionsID.push(item);
         this.$localStorage.set('myFavorite', this.localStorageAttractionsID);
       }
+    },
+    selectCatagory(value) {
+      this.cacheCatagory = value;
+      this.getAttractionsData(this.cacheCity);
     },
   },
 };
