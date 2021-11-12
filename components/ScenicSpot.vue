@@ -171,8 +171,8 @@ export default {
     setLocalStorage(item) {
       if (this.localStorageID[0]) {
         let dataIndex = null;
-        this.localStorageID.forEach((attractionsID, index) => {
-          if (attractionsID === item) {
+        this.localStorageID.forEach((ID, index) => {
+          if (ID === item) {
             dataIndex = index;
           }
         });

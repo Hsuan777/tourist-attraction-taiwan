@@ -14,7 +14,10 @@
     <Hotel v-if="`${$route.params.category === 'Hotel'}`" />
     <ScenicSpot v-else />
     <section class="container mb-15">
-      <p class="fz-large mb-6 border-start border-primary border-4 ps-1">
+      <p
+        v-if="randomData.length >= 4"
+        class="fz-large mb-6 border-start border-primary border-4 ps-1"
+      >
         您可能會喜歡
       </p>
       <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4">
@@ -219,6 +222,9 @@ export default {
     },
     randomJSONData() {
       for (let x = 0; x < 4; x += 1) {
+        if (this.otherData.length < 4) {
+          return;
+        }
         const y = this.randomNumber(this.otherData.length, 0);
         this.randomData.push(this.otherData[y]);
         this.otherData.splice(y, 1);

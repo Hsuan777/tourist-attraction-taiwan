@@ -21,7 +21,7 @@
             align-items-center
           "
         >
-          旅宿
+          暫未提供
         </p>
       </div>
       <div class="col-md-6 position-relative bg-white rounded">

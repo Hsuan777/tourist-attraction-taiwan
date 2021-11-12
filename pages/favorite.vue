@@ -2,7 +2,7 @@
   <div>
     <!-- banner -->
     <figure
-      class="banner magic-height-260 magic-height-md-400 mb-15"
+      class="banner magic-height-300 mb-15"
       :class="`banner__${nowCategory.nameEn}`"
     >
       <div class="container h-100 d-flex align-items-end pb-7">
@@ -46,8 +46,11 @@
         class="list-unstyled row row-cols-1 row-cols-md-3 row-cols-lg-4"
       >
         <li v-for="item in finalDisplayData" :key="item.ID" class="col mb-3 mb-md-14">
-          <div class="border rounded-4 h-100 position-relative">
-            <NuxtLink :to="`/${item.City}/${item.Name}`" class="stretched-link link-secondary">
+          <div class="card--hover shadow border rounded-4 h-100 position-relative">
+            <NuxtLink
+              :to="`/${nowCategory.nameEn}/${item.City}/${item.Name}`"
+              class="stretched-link link-secondary"
+            >
               <img
                 v-if="item.Picture.PictureUrl1"
                 :src="item.Picture.PictureUrl1"
@@ -322,7 +325,7 @@ export default {
     changeCategory(category) {
       const tempData = this.categories.filter((item) => item.nameEn === category);
       this.nowCategory = { ...tempData[0] };
-      this.cacheLocalStorageID = [];
+      this.tempAllData = [];
       this.cacheLocalStorageID = this.$localStorage.get(`myFavorite-${this.nowCategory.nameEn}`) || [];
       this.cacheLocalStorageID.forEach((item) => {
         this.getData(item);

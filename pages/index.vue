@@ -39,7 +39,7 @@
                       align-items-center
                     "
                   >
-                    景點
+                    暫未提供
                   </p>
                 </NuxtLink>
               </div>
