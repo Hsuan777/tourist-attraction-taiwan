@@ -17,7 +17,7 @@
             <div class="row g-0">
               <div class="col-6 col-md-12">
                 <NuxtLink
-                  :to="`/${cacheCatagory.nameEn}/${item.City}/${item.Name}`"
+                  :to="`/${nowCategory.nameEn}/${item.City}/${item.Name}`"
                   class="stretched-link link-secondary"
                 >
                   <img
@@ -92,7 +92,7 @@
               @click="setLocalStorage(item.ID)"
             >
               <img
-                v-if="localStorageAttractionsID.indexOf(item.ID) === -1"
+                v-if="cacheLocalStorageID.indexOf(item.ID) === -1"
                 src="~/assets/icon/icon_like.svg"
                 alt="icon_like"
               >
@@ -125,12 +125,12 @@ export default {
       currentPage: 1,
       finalDisplayData: [],
       cacheSearch: '',
-      cacheCatagory: {
+      nowCategory: {
         name: '景點',
         nameEn: 'ScenicSpot',
       },
       cacheCity: 'Taipei',
-      localStorageAttractionsID: [],
+      cacheLocalStorageID: [],
     };
   },
   computed: {
@@ -145,8 +145,8 @@ export default {
     },
   },
   mounted() {
-    this.selectCatagory(this.cacheCatagory);
-    this.localStorageAttractionsID = this.$localStorage.get('myFavorite') || [];
+    this.selectCatagory(this.nowCategory);
+    this.cacheLocalStorageID = this.$localStorage.get(`myFavorite-${this.nowCategory.nameEn}`) || [];
   },
   methods: {
     getAttractionsData(city) {
@@ -154,7 +154,7 @@ export default {
       this.cacheCity = city;
       this.$axios
         .get(
-          `https://ptx.transportdata.tw/MOTC/v2/Tourism/${this.cacheCatagory.nameEn}/${city}?$format=JSON`,
+          `https://ptx.transportdata.tw/MOTC/v2/Tourism/${this.nowCategory.nameEn}/${city}?$format=JSON`,
           {
             headers: this.getAuthorizationHeader(),
           },
@@ -186,27 +186,29 @@ export default {
       this.finalDisplayData = data.slice(n * page - n, n * page);
     },
     setLocalStorage(item) {
-      if (this.localStorageAttractionsID[0]) {
+      this.cacheLocalStorageID = this.$localStorage.get(`myFavorite-${this.nowCategory.nameEn}`) || [];
+      if (this.cacheLocalStorageID[0]) {
         let dataIndex = null;
-        this.localStorageAttractionsID.forEach((attractionsID, index) => {
-          if (attractionsID === item) {
+        this.cacheLocalStorageID.forEach((ID, index) => {
+          if (ID === item) {
             dataIndex = index;
           }
         });
         if (dataIndex === null) {
-          this.localStorageAttractionsID.push(item);
-          this.$localStorage.set('myFavorite', this.localStorageAttractionsID);
+          this.cacheLocalStorageID.push(item);
+          this.$localStorage.set(`myFavorite-${this.nowCategory.nameEn}`, this.cacheLocalStorageID);
         } else {
-          this.localStorageAttractionsID.splice(dataIndex, 1);
-          this.$localStorage.set('myFavorite', this.localStorageAttractionsID);
+          this.cacheLocalStorageID.splice(dataIndex, 1);
+          this.$localStorage.set(`myFavorite-${this.nowCategory.nameEn}`, this.cacheLocalStorageID);
         }
       } else {
-        this.localStorageAttractionsID.push(item);
-        this.$localStorage.set('myFavorite', this.localStorageAttractionsID);
+        this.cacheLocalStorageID.push(item);
+        this.$localStorage.set(`myFavorite-${this.nowCategory.nameEn}`, this.cacheLocalStorageID);
       }
     },
     selectCatagory(value) {
-      this.cacheCatagory = value;
+      this.cacheLocalStorageID = this.$localStorage.get(`myFavorite-${this.nowCategory.nameEn}`) || [];
+      this.nowCategory = value;
       this.getAttractionsData(this.cacheCity);
     },
   },

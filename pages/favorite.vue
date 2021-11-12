@@ -1,17 +1,41 @@
 <template>
   <div>
     <!-- banner -->
-    <figure class="banner banner__index magic-height-260 magic-height-md-400 mb-15">
+    <figure
+      class="banner magic-height-260 magic-height-md-400 mb-15"
+      :class="`banner__${nowCategory.nameEn}`"
+    >
       <div class="container h-100 d-flex align-items-end pb-7">
         <div class="row justify-content-center w-100">
           <div class="col-md-10">
-            <h1 class="text-white fz-huger">
-              景點
-            </h1>
+            <p class="text-white fz-huger">
+              {{ nowCategory.name }}
+            </p>
           </div>
         </div>
       </div>
     </figure>
+    <div class="container mb-5">
+      <ul class="list-unstyled d-flex mb-4">
+        <li v-for="item in categories" :key="item.name">
+          <button
+            type="button"
+            class="btn btns-lg rounded-pill d-flex align-items-center px-6 me-3"
+            :class="item.nameEn === nowCategory.nameEn ? 'btn-danger' : ' btn-white'"
+            @click="changeCategory(item.nameEn)"
+          >
+            {{ item.name }}
+            <img
+              :src="`_nuxt/assets/icon/icon_${item.nameEn}-${
+                item.nameEn === nowCategory.nameEn ? 'white' : 'gery'
+              }.png`"
+              :alt="`icon_${item.nameEn}`"
+              class="ps-2"
+            >
+          </button>
+        </li>
+      </ul>
+    </div>
     <!-- 我的最愛 -->
     <section class="container mb-5">
       <p class="fz-large mb-6 border-start border-primary border-4 ps-1">
@@ -72,7 +96,7 @@
               @click="setLocalStorage(item.ID)"
             >
               <img
-                v-if="localStorageAttractionsID.indexOf(item.ID) === -1"
+                v-if="cacheLocalStorageID.indexOf(item.ID) === -1"
                 src="~/assets/icon/icon_like.svg"
                 alt="icon_like"
               >
@@ -194,12 +218,34 @@ export default {
           nameEn: 'LienchiangCounty',
         },
       ],
+      categories: [
+        {
+          name: '景點',
+          nameEn: 'ScenicSpot',
+        },
+        {
+          name: '餐飲',
+          nameEn: 'Restaurant',
+        },
+        {
+          name: '旅宿',
+          nameEn: 'Hotel',
+        },
+        {
+          name: '活動',
+          nameEn: 'Activity',
+        },
+      ],
       tempAllData: [],
       totalPages: 0,
       currentPage: 1,
+      nowCategory: {
+        name: '景點',
+        nameEn: 'ScenicSpot',
+      },
       finalDisplayData: [],
       cacheSearch: '',
-      localStorageAttractionsID: [],
+      cacheLocalStorageID: [],
     };
   },
   computed: {
@@ -214,16 +260,16 @@ export default {
     },
   },
   mounted() {
-    this.localStorageAttractionsID = this.$localStorage.get('myFavorite') || [];
-    this.localStorageAttractionsID.forEach((item) => {
+    this.cacheLocalStorageID = this.$localStorage.get(`myFavorite-${this.nowCategory.nameEn}`) || [];
+    this.cacheLocalStorageID.forEach((item) => {
       this.getData(item);
     });
   },
   methods: {
-    getData(attractionsID) {
+    getData(ID) {
       this.$axios
         .get(
-          `https://ptx.transportdata.tw/MOTC/v2/Tourism/ScenicSpot?$filter=ID%20eq%20'${attractionsID}'&$format=JSON`,
+          `https://ptx.transportdata.tw/MOTC/v2/Tourism/${this.nowCategory.nameEn}?$filter=ID%20eq%20'${ID}'&$format=JSON`,
           {
             headers: this.getAuthorizationHeader(),
           },
@@ -252,26 +298,35 @@ export default {
       this.finalDisplayData = data.slice(n * page - n, n * page);
     },
     setLocalStorage(item) {
-      if (this.localStorageAttractionsID[0]) {
+      if (this.cacheLocalStorageID[0]) {
         let dataIndex = null;
-        this.localStorageAttractionsID.forEach((attractionsID, index) => {
+        this.cacheLocalStorageID.forEach((attractionsID, index) => {
           if (attractionsID === item) {
             dataIndex = index;
           }
         });
         if (dataIndex === null) {
-          this.localStorageAttractionsID.push(item);
-          this.$localStorage.set('myFavorite', this.localStorageAttractionsID);
+          this.cacheLocalStorageID.push(item);
+          this.$localStorage.set(`myFavorite-${this.nowCategory.nameEn}`, this.cacheLocalStorageID);
         } else {
-          this.localStorageAttractionsID.splice(dataIndex, 1);
+          this.cacheLocalStorageID.splice(dataIndex, 1);
           this.tempAllData.splice(dataIndex, 1);
           this.changeDisplayData();
-          this.$localStorage.set('myFavorite', this.localStorageAttractionsID);
+          this.$localStorage.set(`myFavorite-${this.nowCategory.nameEn}`, this.cacheLocalStorageID);
         }
       } else {
-        this.localStorageAttractionsID.push(item);
-        this.$localStorage.set('myFavorite', this.localStorageAttractionsID);
+        this.cacheLocalStorageID.push(item);
+        this.$localStorage.set(`myFavorite-${this.nowCategory.nameEn}`, this.cacheLocalStorageID);
       }
+    },
+    changeCategory(category) {
+      const tempData = this.categories.filter((item) => item.nameEn === category);
+      this.nowCategory = { ...tempData[0] };
+      this.cacheLocalStorageID = [];
+      this.cacheLocalStorageID = this.$localStorage.get(`myFavorite-${this.nowCategory.nameEn}`) || [];
+      this.cacheLocalStorageID.forEach((item) => {
+        this.getData(item);
+      });
     },
   },
 };

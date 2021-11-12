@@ -4,7 +4,7 @@
     :class="`banner__${nowCategory.nameEn}`"
   >
     <div class="container h-100 d-flex align-items-end pb-7">
-      <div class="row justify-content-center w-100 mt-15 mt-md-0">
+      <div class="row justify-content-center w-100 mt-18 mt-md-0">
         <div class="col-md-10">
           <p class="text-white fz-huger d-none d-md-block">
             {{ nowCategory.name }}

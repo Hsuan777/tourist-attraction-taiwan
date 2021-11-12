@@ -11,134 +11,8 @@
         </div>
       </div>
     </figure>
-    <section class="container mb-10">
-      <div class="row">
-        <div class="col-md-6">
-          <img
-            v-if="tempData.Picture.PictureUrl1"
-            :src="tempData.Picture.PictureUrl1"
-            :alt="tempData.Picture.PictureDescription1"
-            class="img magic-height-239 magic-height-387 rounded"
-          >
-          <p
-            v-else
-            class="
-              img
-              magic-height-239 magic-height-387
-              bg-grey
-              text-secondary
-              fz-large
-              d-flex
-              justify-content-center
-              align-items-center
-            "
-          >
-            景點
-          </p>
-        </div>
-        <div class="col-md-6 position-relative bg-white rounded">
-          <div class="px-5 pt-4 pb-6">
-            <NuxtLink :to="`/`" class="text-secondary text-decoration-none pe-1">
-              HOME / {{ tempData.City }}
-            </NuxtLink>
-            <h2 class="fz-larger mb-4">
-              {{ tempData.Name }}
-            </h2>
-            <ul class="list-unstyled">
-              <li class="mb-6">
-                <h3 class="fz-medium d-flex align-items-center mb-2">
-                  <img src="~/assets/icon/icon_location-red.svg" alt="icon_location" class="pe-2">
-                  <a
-                    :href="`https://www.google.com/maps/place/${tempData.Position.PositionLat},${tempData.Position.PositionLon}`"
-                    target="_blank"
-                  >Google 地圖</a>
-                </h3>
-              </li>
-              <li class="mb-6 ps-1">
-                <h3 class="fz-medium d-flex align-items-center mb-2">
-                  <img src="~/assets/icon/icon_label.svg" alt="icon_label" class="pe-3">
-                  標籤
-                </h3>
-                <p class="ps-8">
-                  <span
-                    v-if="tempData.Class1"
-                    class="bg-grey text-secondary py-1 px-2 me-1 rounded my-1"
-                  >
-                    {{ tempData.Class1 }}
-                  </span>
-                  <span
-                    v-if="tempData.Class2"
-                    class="bg-grey text-secondary py-1 px-2 me-1 rounded my-1"
-                  >
-                    {{ tempData.Class2 }}
-                  </span>
-                  <span
-                    v-if="tempData.Class3"
-                    class="bg-grey text-secondary py-1 px-2 me-1 rounded my-1"
-                  >
-                    {{ tempData.Class3 }}
-                  </span>
-                </p>
-              </li>
-              <li class="mb-6 ps-1">
-                <h3 class="fz-medium d-flex align-items-center mb-2">
-                  <img src="~/assets/icon/icon_time.svg" alt="icon_time" class="pe-3">
-                  開放時間
-                </h3>
-                <p class="ps-8">
-                  {{ tempData.OpenTime }}
-                </p>
-              </li>
-              <li class="mb-8 ps-1">
-                <h3 class="fz-medium d-flex align-items-center mb-2">
-                  <img src="~/assets/icon/icon_article.svg" alt="icon_article" class="pe-3">
-                  簡介
-                </h3>
-                <p class="ps-8">
-                  {{ tempData.DescriptionDetail }}
-                </p>
-              </li>
-              <li class="d-flex justify-content-center justify-content-md-start">
-                <a
-                  :href="`tel:${tempData.Phone}`"
-                  class="btn btn-outline-danger d-flex align-items-center py-5 px-7 me-5 rounded-4"
-                >
-                  <img src="~/assets/icon/icon_phone.svg" alt="icon_phone" class="pe-1">
-                  {{ tempData.Phone }}
-                </a>
-                <a
-                  :href="tempData.WebsiteUrl"
-                  class="btn btn-danger py-5 px-17 rounded-4"
-                >官方網站</a>
-              </li>
-            </ul>
-            <button
-              type="button"
-              class="
-                btn btn-link
-                position-absolute
-                top-3
-                end-5
-                zi-9
-                p-2
-                bg-white
-                rounded-circle
-                border
-                shadow-sm
-              "
-              @click="setLocalStorage(tempData.ID)"
-            >
-              <img
-                v-if="localStorageAttractionsID.indexOf(tempData.ID) === -1"
-                src="~/assets/icon/icon_like.svg"
-                alt="icon_like"
-              >
-              <img v-else src="~/assets/icon/icon_like-1.svg" alt="icon_like">
-            </button>
-          </div>
-        </div>
-      </div>
-    </section>
+    <Hotel v-if="`${$route.params.category === 'Hotel'}`" />
+    <ScenicSpot v-else />
     <section class="container mb-15">
       <p class="fz-large mb-6 border-start border-primary border-4 ps-1">
         您可能會喜歡
@@ -169,7 +43,7 @@
                   align-items-center
                 "
               >
-                景點
+                暫未提供
               </p>
             </NuxtLink>
             <div class="py-3 px-4">
@@ -200,8 +74,14 @@
 </template>
 <script>
 import JsSHA from 'jssha';
+import ScenicSpot from '../../../components/ScenicSpot.vue';
+import Hotel from '../../../components/Hotel.vue';
 
 export default {
+  components: {
+    ScenicSpot,
+    Hotel,
+  },
   data() {
     return {
       cities: [
@@ -312,35 +192,16 @@ export default {
           nameEn: 'Activity',
         },
       ],
-      tempData: {
-        Picture: {},
-        Position: {},
-      },
       otherData: [],
       randomData: [],
-      localStorageAttractionsID: [],
     };
   },
   mounted() {
-    this.getData();
-    this.localStorageAttractionsID = this.$localStorage.get('myFavorite') || [];
+    this.getOtherData();
   },
   methods: {
-    getData() {
-      this.$axios
-        .get(
-          `https://ptx.transportdata.tw/MOTC/v2/Tourism/${this.$route.params.category}/?$filter=Name%20eq%20'${this.$route.params.name}'&$format=JSON`,
-          {
-            headers: this.getAuthorizationHeader(),
-          },
-        )
-        .then((respons) => {
-          this.tempData = { ...respons.data[0] };
-          this.getOtherData();
-        });
-    },
     getOtherData() {
-      const city = this.cities.filter((item) => item.name === this.tempData.City);
+      const city = this.cities.filter((item) => item.name === this.$route.params.city);
       this.$axios
         .get(
           `https://ptx.transportdata.tw/MOTC/v2/Tourism/${this.$route.params.category}/${city[0].nameEn}?$format=JSON`,
@@ -373,26 +234,6 @@ export default {
       const HMAC = ShaObj.getHMAC('B64');
       const Authorization = `hmac username="${AppID}", algorithm="hmac-sha1", headers="x-date", signature="${HMAC}"`;
       return { Authorization, 'X-Date': GMTString };
-    },
-    setLocalStorage(item) {
-      if (this.localStorageAttractionsID[0]) {
-        let dataIndex = null;
-        this.localStorageAttractionsID.forEach((attractionsID, index) => {
-          if (attractionsID === item) {
-            dataIndex = index;
-          }
-        });
-        if (dataIndex === null) {
-          this.localStorageAttractionsID.push(item);
-          this.$localStorage.set('myFavorite', this.localStorageAttractionsID);
-        } else {
-          this.localStorageAttractionsID.splice(dataIndex, 1);
-          this.$localStorage.set('myFavorite', this.localStorageAttractionsID);
-        }
-      } else {
-        this.localStorageAttractionsID.push(item);
-        this.$localStorage.set('myFavorite', this.localStorageAttractionsID);
-      }
     },
   },
 };
