@@ -25,13 +25,7 @@
             @click="changeCategory(item.nameEn)"
           >
             {{ item.name }}
-            <img
-              :src="`_nuxt/assets/icon/icon_${item.nameEn}-${
-                item.nameEn === nowCategory.nameEn ? 'white' : 'gery'
-              }.png`"
-              :alt="`icon_${item.nameEn}`"
-              class="ps-2"
-            >
+            <img :src="changeIcon(item.nameEn)" :alt="`icon_${item.nameEn}`" class="ps-2">
           </button>
         </li>
       </ul>
@@ -124,6 +118,14 @@
 <script>
 import JsSHA from 'jssha';
 import Page from '../components/Pagination.vue';
+import HotelWhite from '../assets/icon/icon_Hotel-white.png';
+import HotelGery from '../assets/icon/icon_Hotel-gery.png';
+import ActivityWhite from '../assets/icon/icon_Activity-white.png';
+import ActivityGery from '../assets/icon/icon_Activity-gery.png';
+import RestaurantWhite from '../assets/icon/icon_Restaurant-white.png';
+import RestaurantGery from '../assets/icon/icon_Restaurant-gery.png';
+import ScenicSpotWhite from '../assets/icon/icon_ScenicSpot-white.png';
+import ScenicSpotGery from '../assets/icon/icon_ScenicSpot-gery.png';
 
 export default {
   components: {
@@ -330,6 +332,26 @@ export default {
       this.cacheLocalStorageID.forEach((item) => {
         this.getData(item);
       });
+    },
+    changeIcon(iconCategory) {
+      let icon = null;
+      switch (iconCategory) {
+        case 'ScenicSpot':
+          icon = iconCategory === this.nowCategory.nameEn ? ScenicSpotWhite : ScenicSpotGery;
+          break;
+        case 'Restaurant':
+          icon = iconCategory === this.nowCategory.nameEn ? RestaurantWhite : RestaurantGery;
+          break;
+        case 'Hotel':
+          icon = iconCategory === this.nowCategory.nameEn ? HotelWhite : HotelGery;
+          break;
+        case 'Activity':
+          icon = iconCategory === this.nowCategory.nameEn ? ActivityWhite : ActivityGery;
+          break;
+        default:
+          break;
+      }
+      return icon;
     },
   },
 };

@@ -19,7 +19,6 @@
               >
                 {{ item.name }}
                 <img :src="changeIcon(item.nameEn)" :alt="`icon_${item.nameEn}`" class="ps-2">
-                <!-- <img :src="changeIcon(item)" :alt="`icon_${item.nameEn}`" class="ps-2"> -->
               </button>
             </li>
           </ul>
